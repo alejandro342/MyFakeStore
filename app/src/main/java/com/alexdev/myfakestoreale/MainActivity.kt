@@ -15,6 +15,7 @@ import com.alexdev.myfakestoreale.presentation.login.LoginScreen
 import com.alexdev.myfakestoreale.presentation.navigation.LoginRoute
 import com.alexdev.myfakestoreale.presentation.navigation.ProductListRoute
 import com.alexdev.myfakestoreale.presentation.products.ProductScreen
+import com.alexdev.myfakestoreale.ui.theme.FakeStoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,33 +24,33 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
+            FakeStoreTheme() {
+                 Surface(
+                     modifier = Modifier.fillMaxSize(),
+                     color = MaterialTheme.colorScheme.background
+                 ) {
+                     val navController = rememberNavController()
 
-                    NavHost(
-                        navController = navController,
-                        startDestination = LoginRoute
-                    ) {
+                     NavHost(
+                         navController = navController,
+                         startDestination = LoginRoute
+                     ) {
 
-                        composable<LoginRoute> {
-                            LoginScreen(
-                                onLoginSuccess = {
-                                    navController.navigate(ProductListRoute) {
-                                        popUpTo<LoginRoute> { inclusive = true }
-                                    }
-                                }
-                            )
-                        }
-                        composable<ProductListRoute> {
-                            ProductScreen()
-                        }
-                    }
-                }
-            }
+                         composable<LoginRoute> {
+                             LoginScreen(
+                                 onLoginSuccess = {
+                                     navController.navigate(ProductListRoute) {
+                                         popUpTo<LoginRoute> { inclusive = true }
+                                     }
+                                 }
+                             )
+                         }
+                         composable<ProductListRoute> {
+                             ProductScreen()
+                         }
+                     }
+                 }
+             }
         }
     }
 }

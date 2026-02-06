@@ -74,7 +74,7 @@ dependencies {
     //Icons
     implementation (libs.androidx.compose.material.icons.extended)
     //Fonts
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.10.2")
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -1,6 +1,9 @@
 package com.alexdev.myfakestoreale.presentation.login
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,14 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material3.Button
@@ -28,14 +29,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,14 +44,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.alexdev.myfakestoreale.ui.theme.BlueCircle
-import com.alexdev.myfakestoreale.ui.theme.BluePastel
-import com.alexdev.myfakestoreale.ui.theme.GrayVariant
-import com.alexdev.myfakestoreale.ui.theme.OrangePrimary
+import com.alexdev.myfakestoreale.ui.theme.Poppins
 
 
 @Composable
@@ -65,10 +55,12 @@ fun LoginContentScreen(
     onLoginSuccess: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    var checkedState by remember { mutableStateOf(true) }
-    var mPasswordView by remember { mutableStateOf(false) }
+    var checkedState by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("mor_2314") }
     var password by remember { mutableStateOf("83r5^_") }
+    //efectos
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { isVisible = true }
 
     val context = LocalContext.current
     LaunchedEffect(key1 = state.token) {
@@ -86,7 +78,7 @@ fun LoginContentScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BluePastel)
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         Card(
             modifier = Modifier
@@ -109,7 +101,7 @@ fun LoginContentScreen(
                 bottomEnd = 0.dp
             ),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.background
             )
         ) {
         }
@@ -136,7 +128,7 @@ fun LoginContentScreen(
                 bottomEnd = 0.dp
             ),
             colors = CardDefaults.cardColors(
-                containerColor = OrangePrimary
+                containerColor = MaterialTheme.colorScheme.secondary
             )
         ) {
         }
@@ -148,133 +140,95 @@ fun LoginContentScreen(
                 .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
-            Card(
-                modifier = Modifier,
-                elevation = CardDefaults.cardElevation(20.dp),
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomStart = 0.dp,
-                    bottomEnd = 0.dp
-                ),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
-                )
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()) // 1. Permite scroll si la pantalla es chica
-                    .padding(vertical = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Card(
+                    modifier = Modifier,
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    shape = RoundedCornerShape(
+                        topStart = 10.dp,
+                        topEnd = 10.dp,
+                        bottomStart = 10.dp,
+                        bottomEnd = 10.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 ) {
-                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                    DefaultTextField(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        value = username,
-                        onChangedValueText = { username = it },
-                        label = "Login",
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            focusedTextColor = Color.Black
-                        ),
-                        icon = Icons.Outlined.Person
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.End
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Switch(
-                            checked = checkedState,
-                            onCheckedChange = { checkedState = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = BlueCircle,
-                                checkedTrackColor = BluePastel,
-                                uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
-                                uncheckedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                            )
+                        Spacer(modifier = Modifier.height(30.dp))
+                        MyTextField(
+                            value = username,
+                            onValueChange = { username = it },
+                            label = "Usuario",
+                            icon = Icons.Outlined.Person
                         )
-                    }
-                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text(text = "Contraseña") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            focusedTextColor = Color.Black
-                        ),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.VpnKey,
-                                contentDescription = "Icon email",
-                                tint = GrayVariant
-                            )
-                        },
-                        trailingIcon = {
-                            val imagen = if (mPasswordView) {
-                                Icons.Filled.VisibilityOff
-                            } else {
-                                Icons.Filled.Visibility
-                            }
-                            IconButton(onClick = { mPasswordView = !mPasswordView }) {
-                                Icon(
-                                    imageVector = imagen,
-                                    contentDescription = "view password"
-                                )
-                            }
-                        },
-                        visualTransformation = if (mPasswordView) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        }
-                    )
-
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(
-                            0
-                        ),
-                        onClick = {
-                            viewModel.login(username, password)
-                        }
-                    ) {
-                        Box(
+                        Spacer(modifier = Modifier.height(20.dp))
+                        MyTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = "Contraseña",
+                            icon = Icons.Outlined.VpnKey,
+                            keyboardType = KeyboardType.Password
+                        )
+                        Row(
                             modifier = Modifier
-                                .background(orangeGradient)
                                 .fillMaxWidth()
-                                .height(50.dp),
-                            contentAlignment = Alignment.Center
+                                .padding(horizontal = 20.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            if (state.isLoading) {
-                                CircularProgressIndicator(
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            } else {
-                                Text(text = "Iniciar Sesión")
+                            MyText("Recordarme")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            MySwitch(
+                                checked = checkedState,
+                                onCheckedChange = { isChecked ->
+                                    checkedState = isChecked
+                                }
+                            )
+                        }
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(
+                                0
+                            ),
+                            onClick = {
+                                viewModel.login(username, password)
+                            }
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .fillMaxWidth()
+                                    .height(50.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (state.isLoading) {
+                                    CircularProgressIndicator(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                } else {
+                                    Text(text = "Iniciar Sesión", fontFamily = Poppins)
+                                }
                             }
                         }
                     }
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
             }
         }
         Box(

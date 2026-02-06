@@ -15,26 +15,25 @@ val SecondaryBlue = Color(0xFF042780)
 val BlueVariant = Color(0xFF304F9E)
 val GrayVariant = Color(0xFF757575)
 
-//Login dos
+//Login
 val BlueCircle = Color(0xFF000107)
 val BluePastel = Color(0xFF90D1F3)
 val OrangePrimary = Color(0xFFFF5722)
 
-//Login Tres Vista uno
-val BlueV1 = Color(0xFF00DFFD)
-val BlueBV1 = Color(0xFFC7FDF9)
+// --- COLORES PRINCIPALES ---
+val MidnightBlue = Color(0xFF1B263B)
+val MidnightBlueLight = Color(0xFF415A77)
 
-//Login Tres Vista dos
-val BlueV2 = Color(0xFF0198FF)
-val PinkPastel = Color(0xFFC401C0)
-val PurplePastel = Color(0xFFF1A3ED)
+val SunsetCoral = Color(0xFFFF6F61)
+val SoftCoral = Color(0xFFFFB3A7)
 
-//Login Tres Vista tres
-val PinkM3 = Color(0xFFFF33F5)
-val YellowM3 = Color(0xFFFFEB3B)
-val BlueV3 = Color(0xFF4B0BFF)
+// --- NEUTROS Y FONDOS ---
+val CulturedWhite = Color(0xFFF5F5F7)
+val PureWhite = Color(0xFFFFFFFF)
+val LightGrayBorder = Color(0xFFE0E0E0)
+// --- TEXTOS ---
+val Gunmetal = Color(0xFF2D3436)
+val SlateGray = Color(0xFF636E72)
 
-//Login Tres Vista cuatro
-val OrangeV4 = Color(0xFFF58732)
-val PinkV4 = Color(0xFFEB07CD)
-val BlueV4 = Color(0xFF010A49)
+// --- ERRORES ---
+val FashionRed = Color(0xFFD63031)
