@@ -15,7 +15,9 @@ import com.alexdev.myfakestoreale.presentation.login.LoginScreen
 import com.alexdev.myfakestoreale.presentation.navigation.LoginRoute
 import com.alexdev.myfakestoreale.presentation.navigation.ProductListRoute
 import com.alexdev.myfakestoreale.presentation.products.ProductScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()

@@ -3,6 +3,8 @@ package com.alexdev.myfakestoreale.di
 import android.content.Context
 import com.alexdev.myfakestoreale.data.local.StoreManager
 import com.alexdev.myfakestoreale.data.remote.ApiService
+import com.alexdev.myfakestoreale.data.repository.AuthRepositoryImpl
+import com.alexdev.myfakestoreale.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +44,11 @@ object AppModule {
     @Singleton
     fun provideStoreManager(@ApplicationContext context: Context): StoreManager {
         return StoreManager(context)
+    }
+    //Login
+    @Provides
+    @Singleton
+    fun provideAuthRepository(api: ApiService): AuthRepository {
+        return AuthRepositoryImpl(api)
     }
 }
