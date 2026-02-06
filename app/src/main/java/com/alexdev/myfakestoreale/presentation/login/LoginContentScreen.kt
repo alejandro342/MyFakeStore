@@ -30,6 +30,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +59,11 @@ fun LoginContentScreen(
     onLoginSuccess: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+
+    // Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     var checkedState by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("mor_2314") }
     var password by remember { mutableStateOf("83r5^_") }
@@ -72,7 +81,9 @@ fun LoginContentScreen(
 
     LaunchedEffect(key1 = state.error) {
         if (state.error != null) {
-            Toast.makeText(context, state.error, Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = state.error ?: "Error desconocido"
+            )
         }
     }
     Box(
@@ -248,6 +259,18 @@ fun LoginContentScreen(
                 Spacer(modifier = Modifier.fillMaxHeight(0.18f))
                 RoundedPersonImage()
             }
+        }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+        ) { data ->
+            Snackbar(
+                snackbarData = data,
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            )
         }
     }
 }

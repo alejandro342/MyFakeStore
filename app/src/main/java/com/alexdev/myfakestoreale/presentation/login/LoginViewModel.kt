@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import retrofit2.HttpException
+import java.io.IOException
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -26,12 +28,26 @@ class LoginViewModel @Inject constructor(
             val result = loginUseCase(username, password)
 
             result.onSuccess { token ->
+                //storeManager.saveToken(token)
                 _state.update {
                     it.copy(isLoading = false, token = token, error = null)
                 }
             }.onFailure { exception ->
+                val errorMessage = when (exception) {
+                    is HttpException -> {
+                        when (exception.code()) {
+                            401 -> "Usuario o contraseña incorrectos."
+                            404 -> "El servicio no se encuentra disponible."
+                            500, 502 -> "Error interno del servidor."
+                            else -> "Error de comunicación: ${exception.code()}"
+                        }
+                    }
+                    is IOException -> "No tienes conexión a internet."
+                    else -> "Ocurrió un error inesperado: ${exception.localizedMessage}"
+                }
+
                 _state.update {
-                    it.copy(isLoading = false, error = exception.message ?: "Error desconocido")
+                    it.copy(isLoading = false, error = errorMessage)
                 }
             }
         }
