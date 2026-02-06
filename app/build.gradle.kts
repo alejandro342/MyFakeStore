@@ -71,6 +71,10 @@ dependencies {
 
     // --- DATASTORE ---
     implementation(libs.androidx.datastore.preferences)
+    //Icons
+    implementation (libs.androidx.compose.material.icons.extended)
+    //Fonts
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.10.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
