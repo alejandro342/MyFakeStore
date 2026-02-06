@@ -13,3 +13,67 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+├── di                  // Inyección de Dependencias (Hilt)
+│   └── AppModule.kt    // Provee Retrofit, Room, Repositories, etc.
+│
+├── data                // CAPA DE DATOS (El "Cómo" se obtienen los datos)
+│   ├── local           // Base de datos local (Room y DataStore)
+│   │   ├── dao
+│   │   │   └── ProductDao.kt
+│   │   ├── entity
+│   │   │   └── ProductEntity.kt
+│   │   ├── database
+│   │   │   └── FakeStoreDatabase.kt
+│   │   └── preferences
+│   │       └── UserPreferences.kt
+│   │
+│   ├── remote          // Red / API (Retrofit)
+│   │   ├── FakeStoreApi.kt
+│   │   └── dto         // Data Transfer Objects (Modelos tal cual vienen del JSON)
+│   │       └── ProductDto.kt
+│   │
+│   ├── repository      // Implementación de los repositorios
+│   │   └── ProductRepositoryImpl.kt
+│   │
+│   └── mapper          // Mappers para convertir DTO/Entity <-> Domain Model
+│       └── ProductMapper.kt
+│
+├── domain              // CAPA DE DOMINIO (El "Qué" / Reglas de Negocio / Puro Kotlin)
+│   ├── model           // Modelos de negocio puros
+│   │   └── Product.kt
+│   │
+│   ├── repository      // Interfaces de los repositorios
+│   │   └── ProductRepository.kt
+│   │
+│   └── usecase         // Casos de uso (acciones específicas)
+│       ├── GetProductsUseCase.kt
+│       └── LoginUseCase.kt
+│
+├── presentation        // CAPA DE PRESENTACIÓN (UI / MVVM / Compose)
+│   ├── navigation
+│   │   └── AppNavigation.kt  // Rutas Type-Safe (@Serializable)
+│   │
+│   ├── theme           // Tema de Compose (Colores, Tipografía)
+│   │   ├── Color.kt
+│   │   ├── Theme.kt
+│   │   └── Type.kt
+│   │
+│   ├── component       // Componentes UI reutilizables (Botones, Cards, Loaders)
+│   │   └── LoadingWheel.kt
+│   │
+│   ├── splash          // Pantalla Splash
+│   │   └── SplashScreen.kt
+│   │
+│   ├── login           // Feature Login
+│   │   ├── LoginScreen.kt
+│   │   └── LoginViewModel.kt
+│   │
+│   └── products        // Feature Productos
+│       ├── ProductScreen.kt
+│       ├── ProductViewModel.kt
+│       └── components  // Componentes exclusivos de esta pantalla
+│           └── ProductItem.kt
+│
+├── FakeStoreApp.kt     // Clase Application (@HiltAndroidApp)
+└── MainActivity.kt     // Punto de entrada (NavHost)
