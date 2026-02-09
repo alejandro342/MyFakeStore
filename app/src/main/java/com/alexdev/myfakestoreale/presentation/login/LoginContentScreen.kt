@@ -50,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.alexdev.myfakestoreale.presentation.login.components.LoginBackground
+import com.alexdev.myfakestoreale.presentation.navigation.loginMenuOptions
 import com.alexdev.myfakestoreale.ui.theme.Poppins
 
 
@@ -62,7 +64,6 @@ fun LoginContentScreen(
 
     // Snackbar
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     var checkedState by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("mor_2314") }
@@ -86,63 +87,7 @@ fun LoginContentScreen(
             )
         }
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary)
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .graphicsLayer(
-                    clip = true,
-                    shape = GenericShape { size, _ ->
-                        moveTo(0f, 0f)
-                        lineTo(size.width, 0f)
-                        lineTo(size.width, size.height)
-                        lineTo(0f, size.height * 0.6f)
-                        close()
-                    }
-                ),
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = 0.dp,
-                bottomEnd = 0.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
-            )
-        ) {
-        }
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.45f)
-                .padding(bottom = 30.dp)
-                .graphicsLayer(
-                    clip = true,
-                    shape = GenericShape { size, _ ->
-                        moveTo(0f, 0f)
-                        lineTo(size.width, 0f)
-                        lineTo(size.width, size.height)
-                        lineTo(0f, size.height * 0.0f)
-                        close()
-                    }
-                )
-                .align(Alignment.BottomCenter),
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp,
-                bottomStart = 0.dp,
-                bottomEnd = 0.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondary
-            )
-        ) {
-        }
+    LoginBackground {
         Box(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -207,37 +152,12 @@ fun LoginContentScreen(
                                 }
                             )
                         }
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(
-                                0
-                            ),
-                            onClick = {
-                                viewModel.login(username, password)
-                            }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .fillMaxWidth()
-                                    .height(50.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (state.isLoading) {
-                                    CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                } else {
-                                    Text(text = "Iniciar Sesión", fontFamily = Poppins)
-                                }
-                            }
-                        }
+                        MyButton(
+                            text = "Iniciar Sesión",
+                            onClick = { viewModel.login(username, password) },
+                            isLoading = state.isLoading,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
                     }
                 }
             }
@@ -260,11 +180,21 @@ fun LoginContentScreen(
                 RoundedPersonImage()
             }
         }
+        Box(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            LoginBottomBar(
+                items = loginMenuOptions,
+                onOptionSelected = { route ->
+                    Toast.makeText(context, "Navegar a: $route", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 100.dp)
         ) { data ->
             Snackbar(
                 snackbarData = data,
