@@ -113,6 +113,16 @@ class LoginViewModel @Inject constructor(
     }
 
     fun clearState() {
-        //  _state.update { LoginState() }
+        _state.update { currentState ->
+            currentState.copy(
+                isLoginSuccess = false,
+                loginError = null,
+                isLoading = false,
+                usernameError = false,
+                passwordError = false,
+                password = "",
+                username = ""
+            )
+        }
     }
 }

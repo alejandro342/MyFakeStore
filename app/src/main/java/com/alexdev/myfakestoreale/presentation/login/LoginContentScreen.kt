@@ -59,6 +59,7 @@ fun LoginContentScreen(
 
                 is LoginSideEffect.NavigateToHome -> {
                     onLoginSuccess()
+                    viewModel.clearState()
                 }
 
                 is LoginSideEffect.NavigateToRegister -> {
