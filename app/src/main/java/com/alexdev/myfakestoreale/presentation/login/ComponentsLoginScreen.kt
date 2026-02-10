@@ -36,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -59,6 +60,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.alexdev.myfakestoreale.R
 import com.alexdev.myfakestoreale.presentation.navigation.BottomMenuItem
+import com.alexdev.myfakestoreale.ui.theme.Poppins
 
 @Composable
 fun RoundedPersonImage() {
@@ -180,7 +182,8 @@ fun MyText(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = MaterialTheme.colorScheme.background,
+        fontFamily = Poppins
     )
 }
 
@@ -355,7 +358,6 @@ fun LoginForm(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // 1. Olvidé mi contraseña (Izquierda)
                 Text(
                     text = stringResource(R.string.login_forgot_password),
                     style = MaterialTheme.typography.labelMedium,
@@ -384,6 +386,47 @@ fun LoginForm(
                 isLoading = state.isLoading,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun ResumeSessionView(
+    username: String,
+    onContinueClick: () -> Unit,
+    onSwitchAccountClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Hola, ${username.ifEmpty { "Usuario" }}",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Button(
+            onClick = onContinueClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            MyText("Entrar")
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        TextButton(onClick = onSwitchAccountClick) {
+            Text("Usar otra cuenta", color = MaterialTheme.colorScheme.secondary)
         }
     }
 }

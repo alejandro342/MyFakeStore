@@ -1,9 +1,12 @@
 package com.alexdev.myfakestoreale.presentation.login
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,10 +48,6 @@ fun LoginContentScreen(
     // Snackbar
     val snackbarHostState = remember { SnackbarHostState() }
 
-    //efectos
-    var isVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { isVisible = true }
-
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -84,16 +83,24 @@ fun LoginContentScreen(
                 .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = slideInVertically(initialOffsetY = { it }) + fadeIn()
-            ) {
-                LoginForm(
-                    state = state,
-                    errorUserMsg = if (state.usernameError) errorUserTxt else null,
-                    errorPassMsg = if (state.passwordError) errorPassTxt else null,
-                    onEvent = viewModel::onEvent
-                )
+            AnimatedContent(
+                targetState = state.hasActiveSession,
+                label = "SessionSwitch"
+            ) { hasSession ->
+                if (hasSession) {
+                    ResumeSessionView(
+                        username = state.username,
+                        onContinueClick = { viewModel.onEvent(LoginUiEvent.OnContinueSessionClicked) },
+                        onSwitchAccountClick = { viewModel.onEvent(LoginUiEvent.OnSwitchAccountClicked) }
+                    )
+                } else {
+                    LoginForm(
+                        state = state,
+                        errorUserMsg = if (state.usernameError) errorUserTxt else null,
+                        errorPassMsg = if (state.passwordError) errorPassTxt else null,
+                        onEvent = viewModel::onEvent
+                    )
+                }
             }
         }
         Box(
@@ -104,14 +111,20 @@ fun LoginContentScreen(
                 .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            AnimatedVisibility(
+                visible = !state.hasActiveSession,
+                enter = scaleIn() + fadeIn(),
+                exit = scaleOut() + fadeOut()
             ) {
-                Spacer(modifier = Modifier.fillMaxHeight(0.18f))
-                RoundedPersonImage()
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.fillMaxHeight(0.18f))
+                    RoundedPersonImage()
+                }
             }
         }
         Box(

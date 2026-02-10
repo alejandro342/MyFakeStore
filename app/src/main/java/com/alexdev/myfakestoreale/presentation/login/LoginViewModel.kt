@@ -2,12 +2,14 @@ package com.alexdev.myfakestoreale.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alexdev.myfakestoreale.data.local.StoreManager
 import com.alexdev.myfakestoreale.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,14 +19,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val storeManager: StoreManager
 ) : ViewModel() {
+
+    init {
+        checkActiveSession()
+    }
 
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
 
     private val _effect = Channel<LoginSideEffect>()
     val effect = _effect.receiveAsFlow()
+
+    private fun checkActiveSession() {
+        viewModelScope.launch {
+            storeManager.getToken()
+                .combine(storeManager.getUser()) { token, savedUser ->
+                if (!token.isNullOrBlank()) {
+                    _state.update {
+                        it.copy(hasActiveSession = true, username = savedUser ?: "")
+                    }
+                } else {
+                    _state.update { it.copy(hasActiveSession = false) }
+                }
+            }.collect {}
+        }
+    }
 
     fun onEvent(event: LoginUiEvent) {
         when (event) {
@@ -51,6 +73,23 @@ class LoginViewModel @Inject constructor(
 
             is LoginUiEvent.OnRegisterClicked -> {
                 sendEffect(LoginSideEffect.NavigateToRegister)
+            }
+
+            is LoginUiEvent.OnContinueSessionClicked -> {
+                sendEffect(LoginSideEffect.NavigateToHome)
+            }
+
+            is LoginUiEvent.OnSwitchAccountClicked -> {
+                viewModelScope.launch {
+                    storeManager.clearSession()
+                    _state.update {
+                        it.copy(
+                            hasActiveSession = false,
+                            username = "",
+                            password = ""
+                        )
+                    }
+                }
             }
 
             else -> {}
@@ -84,7 +123,7 @@ class LoginViewModel @Inject constructor(
 
             loginUseCase(user, pass)
                 .onSuccess { token ->
-                    //storeManager.saveToken(token)
+                    storeManager.saveSession(token, user)
                     _state.update { it.copy(isLoading = false, isLoginSuccess = true) }
                     sendEffect(LoginSideEffect.NavigateToHome)
                 }

@@ -14,7 +14,8 @@ data class LoginUiState(
     val usernameError: Boolean = false,
     val passwordError: Boolean = false,
     val loginError: String? = null,
-    val isLoginSuccess: Boolean = false
+    val isLoginSuccess: Boolean = false,
+    val hasActiveSession: Boolean = false
 )
 
 sealed class LoginUiEvent {
@@ -25,6 +26,8 @@ sealed class LoginUiEvent {
     object OnForgotPasswordClicked : LoginUiEvent()
     object OnRegisterClicked : LoginUiEvent()
     object OnErrorDismissed : LoginUiEvent()
+    object OnContinueSessionClicked : LoginUiEvent()
+    object OnSwitchAccountClicked : LoginUiEvent()
 }
 
 sealed class LoginSideEffect {
