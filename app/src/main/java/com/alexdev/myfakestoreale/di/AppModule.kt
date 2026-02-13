@@ -4,7 +4,10 @@ import android.content.Context
 import com.alexdev.myfakestoreale.data.local.StoreManager
 import com.alexdev.myfakestoreale.data.remote.ApiService
 import com.alexdev.myfakestoreale.data.repository.AuthRepositoryImpl
+import com.alexdev.myfakestoreale.data.repository.ProductRepositoryImpl
 import com.alexdev.myfakestoreale.domain.repository.AuthRepository
+import com.alexdev.myfakestoreale.domain.repository.ProductRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +53,12 @@ object AppModule {
     @Singleton
     fun provideAuthRepository(api: ApiService): AuthRepository {
         return AuthRepositoryImpl(api)
+    }
+
+    // instancia de ProductRepositoryImpl"
+    @Provides
+    @Singleton
+    fun provideProductRepository(api: ApiService): ProductRepository {
+        return ProductRepositoryImpl(api)
     }
 }
