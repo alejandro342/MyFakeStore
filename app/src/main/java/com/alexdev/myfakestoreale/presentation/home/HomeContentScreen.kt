@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.alexdev.myfakestoreale.R
 import com.alexdev.myfakestoreale.presentation.home.components.ProductItem
 
@@ -76,79 +76,79 @@ fun HomeScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
+            //ENCABEZADO
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
             ) {
-
-                //ENCABEZADO
-                item(span = { GridItemSpan(2) }) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text(
-                                    text = stringResource(R.string.good_afternoon),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.Gray
-                                )
-                                Text(
-                                    text = stringResource(R.string.find_your_style),
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            IconButton(onClick = {}) {
-                                Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SearchBar(
-                            query = "",
-                            onQueryChange = {},
-                            onSearch = {},
-                            active = false,
-                            onActiveChange = {},
-                            placeholder = { Text(stringResource(R.string.looking_for_clothes_jewelry)) },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.Search,
-                                    contentDescription = null
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {}
-
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            text = "${state.greeting}, ${state.userName}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = stringResource(R.string.find_your_style),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = "Carrito")
                     }
                 }
 
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = stringResource(R.string.popular_products),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
+                SearchBar(
+                    query = "",
+                    onQueryChange = {},
+                    onSearch = {},
+                    active = false,
+                    onActiveChange = {},
+                    placeholder = { Text(stringResource(R.string.looking_for_clothes_jewelry)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.Search,
+                            contentDescription = null
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {}
 
-                items(state.products) { product ->
-                    ProductItem(
-                        product = product,
-                        onClick = {
-                            viewModel.onEvent(HomeUiEvent.OnProductClicked(product.id))
-                        }
-                    )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    item(span = { GridItemSpan(2) }) {
+                        Text(
+                            text = stringResource(R.string.popular_products),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+
+                    items(state.products) { product ->
+                        ProductItem(
+                            product = product,
+                            onClick = {
+                                viewModel.onEvent(HomeUiEvent.OnProductClicked(product.id))
+                            }
+                        )
+                    }
                 }
             }
         }

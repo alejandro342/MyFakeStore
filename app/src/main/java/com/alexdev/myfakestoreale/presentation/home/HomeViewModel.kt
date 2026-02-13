@@ -2,7 +2,9 @@ package com.alexdev.myfakestoreale.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alexdev.myfakestoreale.domain.usecase.GetGreetingUseCase
 import com.alexdev.myfakestoreale.domain.usecase.GetProductsUseCase
+import com.alexdev.myfakestoreale.domain.usecase.GetUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getProductsUseCase: GetProductsUseCase
+    private val getProductsUseCase: GetProductsUseCase,
+    private val getGreetingUseCase: GetGreetingUseCase,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -24,9 +28,26 @@ class HomeViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     init {
-        fetchProducts()
+        loadData()
     }
 
+
+    private fun loadData() {
+        val currentGreeting = getGreetingUseCase()
+        viewModelScope.launch {
+            getUserUseCase().collect { name ->
+                _state.update {
+                    it.copy(
+                        greeting = currentGreeting,
+                        userName = name ?: "Usuario"
+                    )
+                }
+            }
+        }
+        _state.update { it.copy(greeting = currentGreeting) }
+
+        fetchProducts()
+    }
 
     fun onEvent(event: HomeUiEvent) {
         when (event) {

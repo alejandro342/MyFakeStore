@@ -12,6 +12,5 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
     @GET("products")
-
     suspend fun getAllProducts(): List<ProductModel>
 }

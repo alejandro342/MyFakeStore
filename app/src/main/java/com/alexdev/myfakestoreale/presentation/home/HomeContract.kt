@@ -13,7 +13,9 @@ data class HomeUiState(
         "jewelery",
         "men's clothing",
         "women's clothing"
-    )
+    ),
+    val greeting: String = "",
+    val userName: String = ""
 )
 
 sealed class HomeUiEvent {

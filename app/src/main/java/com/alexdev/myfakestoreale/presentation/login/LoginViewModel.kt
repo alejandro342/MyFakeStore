@@ -3,6 +3,8 @@ package com.alexdev.myfakestoreale.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alexdev.myfakestoreale.data.local.StoreManager
+import com.alexdev.myfakestoreale.domain.usecase.GetGreetingUseCase
+import com.alexdev.myfakestoreale.domain.usecase.GetUserUseCase
 import com.alexdev.myfakestoreale.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,13 +17,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val storeManager: StoreManager
+    private val storeManager: StoreManager,
+    private val getGreetingUseCase: GetGreetingUseCase,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
 
     init {
@@ -30,29 +33,38 @@ class LoginViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
-
     private val _effect = Channel<LoginSideEffect>()
     val effect = _effect.receiveAsFlow()
-
     private fun checkActiveSession() {
+
         viewModelScope.launch {
             storeManager.getToken()
-                .combine(storeManager.getUser()) { token, savedUser ->
-                    val currentGreeting = getTimeBasedGreeting()
-                    if (!token.isNullOrBlank()) {
-                        _state.update {
-                            it.copy(
-                                hasActiveSession = true,
-                                username = savedUser ?: "",
-                                greeting = currentGreeting
-                            )
+                .combine(getUserUseCase()) { token, savedUser ->
+
+                    val currentGreeting = getGreetingUseCase()
+                    val isSessionActive = !token.isNullOrBlank()
+                    val finalUser = savedUser ?: ""
+
+                    Triple(isSessionActive, finalUser, currentGreeting)
+                }
+                .collect { (isActive, user, greeting) ->
+                    if (isActive) {
+                        getUserUseCase().collect {
+                            _state.update {
+                                it.copy(
+                                    hasActiveSession = true,
+                                    username = user,
+                                    greeting = greeting
+                                )
+                            }
                         }
                     } else {
                         _state.update { it.copy(hasActiveSession = false) }
                     }
-                }.collect {}
+                }
         }
     }
+
 
     fun onEvent(event: LoginUiEvent) {
         when (event) {
@@ -116,7 +128,12 @@ class LoginViewModel @Inject constructor(
         val hasPassError = pass.isBlank()
 
         if (hasUserError || hasPassError) {
-            _state.update { it.copy(usernameError = hasUserError, passwordError = hasPassError) }
+            _state.update {
+                it.copy(
+                    usernameError = hasUserError,
+                    passwordError = hasPassError
+                )
+            }
             return
         }
         performLogin(user, pass)
@@ -168,17 +185,6 @@ class LoginViewModel @Inject constructor(
                 password = "",
                 username = ""
             )
-        }
-    }
-
-    private fun getTimeBasedGreeting(): String {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-
-        return when (hour) {
-            in 5..11 -> "Buenos días"
-            in 12..19 -> "Buenas tardes"
-            else -> "Buenas noches"
         }
     }
 }
