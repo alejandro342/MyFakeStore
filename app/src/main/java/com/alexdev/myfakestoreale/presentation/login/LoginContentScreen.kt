@@ -89,6 +89,7 @@ fun LoginContentScreen(
             ) { hasSession ->
                 if (hasSession) {
                     ResumeSessionView(
+                        greeting = state.greeting,
                         username = state.username,
                         onContinueClick = { viewModel.onEvent(LoginUiEvent.OnContinueSessionClicked) },
                         onSwitchAccountClick = { viewModel.onEvent(LoginUiEvent.OnSwitchAccountClicked) }

@@ -36,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -58,6 +57,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alexdev.myfakestoreale.R
 import com.alexdev.myfakestoreale.presentation.navigation.BottomMenuItem
 import com.alexdev.myfakestoreale.ui.theme.Poppins
@@ -171,7 +171,7 @@ fun MyTextField(
                 text = errorMsg,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(start = 36.dp, top = 2.dp) // Alineado bonito
+                modifier = Modifier.padding(start = 36.dp, top = 2.dp)
             )
         }
     }
@@ -183,7 +183,8 @@ fun MyText(text: String) {
         text = text,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.background,
-        fontFamily = Poppins
+        fontFamily = Poppins,
+        fontSize = 16.sp
     )
 }
 
@@ -327,9 +328,9 @@ fun LoginForm(
             // USUARIO
             MyTextField(
                 value = state.username,
-                onValueChange = { onEvent(LoginUiEvent.OnUsernameChanged(it)) }, // Evento
+                onValueChange = { onEvent(LoginUiEvent.OnUsernameChanged(it)) },
                 label = stringResource(R.string.login_username_label),
-                errorMsg = errorUserMsg, // Estado
+                errorMsg = errorUserMsg,
                 imeAction = ImeAction.Next,
                 onAction = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                 icon = Icons.Outlined.Person
@@ -340,9 +341,9 @@ fun LoginForm(
             // CONTRASEÑA
             MyTextField(
                 value = state.password,
-                onValueChange = { onEvent(LoginUiEvent.OnPasswordChanged(it)) }, // Evento
+                onValueChange = { onEvent(LoginUiEvent.OnPasswordChanged(it)) },
                 label = stringResource(R.string.login_password_label),
-                errorMsg = errorPassMsg, // Estado
+                errorMsg = errorPassMsg,
                 icon = Icons.Outlined.VpnKey,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
@@ -363,7 +364,7 @@ fun LoginForm(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
-                        onEvent(LoginUiEvent.OnForgotPasswordClicked) // Dispara evento
+                        onEvent(LoginUiEvent.OnForgotPasswordClicked)
                     }
                 )
 
@@ -373,7 +374,7 @@ fun LoginForm(
                     MySwitch(
                         checked = state.checkedState,
                         onCheckedChange = { isChecked ->
-                            onEvent(LoginUiEvent.OnRememberMeChanged(isChecked)) // Enviamos evento
+                            onEvent(LoginUiEvent.OnRememberMeChanged(isChecked))
                         }
                     )
                 }
@@ -392,6 +393,7 @@ fun LoginForm(
 
 @Composable
 fun ResumeSessionView(
+    greeting: String,
     username: String,
     onContinueClick: () -> Unit,
     onSwitchAccountClick: () -> Unit
@@ -404,12 +406,11 @@ fun ResumeSessionView(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Hola, ${username.ifEmpty { "Usuario" }}",
+            text = "$greeting, ${username.ifEmpty { "Usuario" }}",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -421,12 +422,6 @@ fun ResumeSessionView(
             shape = RoundedCornerShape(10.dp)
         ) {
             MyText("Entrar")
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        TextButton(onClick = onSwitchAccountClick) {
-            Text("Usar otra cuenta", color = MaterialTheme.colorScheme.secondary)
         }
     }
 }

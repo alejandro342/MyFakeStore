@@ -15,7 +15,8 @@ data class LoginUiState(
     val passwordError: Boolean = false,
     val loginError: String? = null,
     val isLoginSuccess: Boolean = false,
-    val hasActiveSession: Boolean = false
+    val hasActiveSession: Boolean = false,
+    val greeting: String = "Hola"
 )
 
 sealed class LoginUiEvent {

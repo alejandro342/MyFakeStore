@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,14 +38,19 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             storeManager.getToken()
                 .combine(storeManager.getUser()) { token, savedUser ->
-                if (!token.isNullOrBlank()) {
-                    _state.update {
-                        it.copy(hasActiveSession = true, username = savedUser ?: "")
+                    val currentGreeting = getTimeBasedGreeting()
+                    if (!token.isNullOrBlank()) {
+                        _state.update {
+                            it.copy(
+                                hasActiveSession = true,
+                                username = savedUser ?: "",
+                                greeting = currentGreeting
+                            )
+                        }
+                    } else {
+                        _state.update { it.copy(hasActiveSession = false) }
                     }
-                } else {
-                    _state.update { it.copy(hasActiveSession = false) }
-                }
-            }.collect {}
+                }.collect {}
         }
     }
 
@@ -162,6 +168,17 @@ class LoginViewModel @Inject constructor(
                 password = "",
                 username = ""
             )
+        }
+    }
+
+    private fun getTimeBasedGreeting(): String {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        return when (hour) {
+            in 5..11 -> "Buenos días"
+            in 12..19 -> "Buenas tardes"
+            else -> "Buenas noches"
         }
     }
 }
