@@ -11,7 +11,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.alexdev.myfakestoreale.presentation.home.HomeScreen
 import com.alexdev.myfakestoreale.presentation.login.LoginScreen
+import com.alexdev.myfakestoreale.presentation.navigation.HomeRoute
 import com.alexdev.myfakestoreale.presentation.navigation.LoginRoute
 import com.alexdev.myfakestoreale.presentation.navigation.ProductListRoute
 import com.alexdev.myfakestoreale.presentation.products.ProductScreen
@@ -39,14 +41,14 @@ class MainActivity : ComponentActivity() {
                          composable<LoginRoute> {
                              LoginScreen(
                                  onLoginSuccess = {
-                                     navController.navigate(ProductListRoute) {
+                                     navController.navigate(HomeRoute) {
                                          popUpTo<LoginRoute> { inclusive = true }
                                      }
                                  }
                              )
                          }
-                         composable<ProductListRoute> {
-                             ProductScreen()
+                         composable<HomeRoute> {
+                             HomeScreen()
                          }
                      }
                  }
